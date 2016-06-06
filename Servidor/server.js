@@ -24,40 +24,48 @@ app.use("/controller", express.static(__dirname + '/controller'));
 // obtenemos la instancia del UsuarioController
 var usuarioController = require('./controller/UsuarioController');
 
-//Routing
-app.post('/logon', function (req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
-  console.log("Username: " + req.body.username);
-  console.log("Password: " + req.body.password);
-
-  var usuarioObj = usuarioController.Login(username, password);
-
-  res.json(usuarioObj);
-});
-
+// ********************
 // *** Modulo: Usuarios
+// Logon Sistema
+app.post('/logon', function (req, res) {
+	try{
+	  var username = req.body.username;
+	  var password = req.body.password;
+	  console.log("Username: " + req.body.username);
+	  console.log("Password: " + req.body.password);
 
+	  usuarioController.Login(username, password, function(resData){
+	  	res.json(resData);	
+	  });
+	}
+	catch(error){
+		throw error;
+	}
+});
 // Crear 
 app.post('/usuario/createUser', function (req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
-  var nombre = req.body.nombre;
-  var role = req.body.role;
+	try{
+	  var username = req.body.username;
+	  var password = req.body.password;
+	  var nombre = req.body.nombre;
+	  var role = req.body.role;
 
-  var response = usuarioController.Crear(username, password, nombre, role);
-  var responseJson = { resultado : response };
+	  usuarioController.Crear(username, password, nombre, role, function(resData){
+	  	var responseJson = resData;
 
-  console.log(responseJson);
-
-  res.json(responseJson);
+	  	console.log(responseJson);
+		res.json(responseJson);
+	  });
+	}
+	catch(error){
+		throw error;
+	}
 });
-
-//Listar
+// Listar
 app.post('/usuario/list', function (req, res) {
 	try{
 		usuarioController.Lista(function(resData){
-			var responseJson = { resultado : resData };
+			var responseJson = resData;
 		  	console.log(responseJson);
 		  	res.json(responseJson);
 	  	});
@@ -67,6 +75,7 @@ app.post('/usuario/list', function (req, res) {
 	}
 });
 
+// Funciones del Socket.io
 io.sockets.on('connection', function (socket) { // conexion
 	socket.on('initRoom', function (data) {
 		console.log("Entro al chat");

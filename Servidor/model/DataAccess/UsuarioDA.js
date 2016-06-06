@@ -1,19 +1,20 @@
+// constructor del objeto
 var UsuarioDA = function(){};
 
 // instancia del schema Usuario
 var Usuario = require.main.require('./model/Schemas/Usuario');
 
-UsuarioDA.prototype.ValidarUsuario = function(login, password){
+UsuarioDA.prototype.ValidarUsuario = function(login, password, callback){
 		// obtenemos el usuario por login y password
 		Usuario.find({ username: login, password: password }, 
 		function(err, user) {
 	  		if (err) throw err;
 	  		// object of the user
-	  		return user;
+	  		callback(user);
 		});
 };
 
-UsuarioDA.prototype.CrearUsuario = function(username, password, nombre, role){
+UsuarioDA.prototype.CrearUsuario = function(username, password, nombre, role, callback){
 		var newUsuario = Usuario({
 		 	username: username,
 		 	password: password,
@@ -24,7 +25,7 @@ UsuarioDA.prototype.CrearUsuario = function(username, password, nombre, role){
 		newUsuario.save(function(err) {
 		  if (err) throw err;
 
-		  return true;
+		  callback(true);
 		});
 };
 
@@ -33,7 +34,7 @@ UsuarioDA.prototype.GetAll = function(callback){
 		Usuario.find({}, 
 		function(err, list) {
 		  if (err) throw err;
-		  console.log(list);
+		  
 		  callback(list);
 		});
 };

@@ -1,10 +1,11 @@
-module.exports = {
+// constructor del objeto
+var FinanzaDA = function(){};
 
 // instancia del schema Finanza
-var Finanza = require('./model/Schema/Finanza');
+var Finanza = require.main.require('./model/Schema/Finanza');
 
 // metodo para crear una finanza en DB
-Crear : function(finanzaObj){
+FinanzaDA.prototype.Crear = function(finanzaObj, callback){
 		var newFinanza = Finanza({
 	  		nombrePersona: finanzaObj.nombrePersona,
 	  		fchMovimiento: finanzaObj.fchMovimiento,
@@ -14,12 +15,12 @@ Crear : function(finanzaObj){
 		newFinanza.save(function(err) {
 		  if (err) throw err;
 
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para edita una finanza en DB
-Editar: function(finanzaObj){
+FinanzaDA.prototype.Editar = function(finanzaObj, callback){
 		// find the user with id 4
 		// update username to starlord 88
 		Finanza.findByIdAndUpdate(finanzaObj.id, 
@@ -32,40 +33,41 @@ Editar: function(finanzaObj){
 		  if (err) throw err;
 
 		  // we have the updated user returned to us
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para eliminar una finanza en DB
-Eliminar: function(finanzaObj){
+FinanzaDA.prototype.Eliminar = function(finanzaObj, callback){
 		// find the user with id 4
 		Finanza.findByIdAndRemove(finanzaObj.id, function(err) {
 		  if (err) throw err;
 
 		  // we have deleted the user
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para obtener todas las finanzas en DB
-GetAll: function(){
+FinanzaDA.prototype.GetAll = function(callback){
 		// get all the users
 		Finanza.find({}, function(err, finanzas) {
 		  if (err) throw err;
 
 		  // object of all the users
-		  return finanzas;
+		  callback(finanzas);
 		});
-	},
+};
 
 // metodo para obtener una lista de finanzas por un filtro determinado
-GetByFiltro: function(finanzaObj){
+FinanzaDA.prototype.GetByFiltro = function(finanzaObj, callback){
 		// get all the users
 		Finanza.find({finanzaObj}, function(err, finanzas) {
 		  if (err) throw err;
 
 		  // object of all the users
-		  return finanzas;
+		  callback(finanzas);
 		});
-	}
 };
+
+module.exports = new FinanzaDA();

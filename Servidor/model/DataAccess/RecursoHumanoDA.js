@@ -1,10 +1,11 @@
-module.exports = {
+// constructor del objeto
+var RecursoHumanoDA = function(){};
 
 // instancia del schema RecursoHumano
-var RecursoHumano = require('./model/Schema/RecursoHumano');
+var RecursoHumano = require.main.require('./model/Schema/RecursoHumano');
 
 // metodo para crear una finanza en DB
-Crear: function(rrhhObj){
+RecursoHumanoDA.prototype.Crear = function(rrhhObj, callback){
 		var newRRHH = RecursoHumano({
 		 	nombrePersona: rrhhObj.nombrePersona,
 	  		fchNacimiento: rrhhObj.fchNacimiento,
@@ -21,12 +22,12 @@ Crear: function(rrhhObj){
 		newRRHH.save(function(err) {
 		  if (err) throw err;
 
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para edita una finanza en DB
-Editar: function(rrhhObj){
+RecursoHumanoDA.prototype.Editar = function(rrhhObj, callback){
 		// find the user with id 4
 		// update username to starlord 88
 		RecursoHumano.findByIdAndUpdate(finanzaObj.id, 
@@ -46,40 +47,41 @@ Editar: function(rrhhObj){
 		  if (err) throw err;
 
 		  // we have the updated user returned to us
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para eliminar una finanza en DB
-Eliminar: function(rrhhObj){
+RecursoHumanoDA.prototype.Eliminar = function(rrhhObj, callback){
 		// find the user with id 4
 		RecursoHumano.findByIdAndRemove(rrhhObj.id, function(err) {
 		  if (err) throw err;
 
 		  // we have deleted the user
-		  return true;
+		  callback(true);
 		});
-	},
+};
 
 // metodo para obtener todas las finanzas en DB
-GetAll: function(){
+RecursoHumanoDA.prototype.GetAll = function(callback){
 		// get all the users
 		RecursoHumano.find({}, function(err, rrhhList) {
 		  if (err) throw err;
 
 		  // object of all the users
-		  return rrhhList;
+		  callback(rrhhList);
 		});
-	},
+};
 
 // metodo para obtener una lista de finanzas por un filtro determinado
-GetByFiltro: function(rrhhObj){
+RecursoHumanoDA.prototype.GetByFiltro = function(rrhhObj, callback){
 		// get all the users
 		RecursoHumano.find({rrhhObj}, function(err, rrhhList) {
 		  if (err) throw err;
 
 		  // object of all the users
-		  return rrhhList;
+		  callback(rrhhList);
 		});
-	}
 };
+
+module.exports = new RecursoHumanoDA();

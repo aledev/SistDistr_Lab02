@@ -5,36 +5,41 @@ var cPrefix = "model.DataAccess.UsuarioController";
 // instancia del dataaccess UsuarioDA
 var usuarioDA = require.main.require('./model/DataAccess/UsuarioDA');
 
-UsuarioController.prototype.Login = function(user, pass){
+UsuarioController.prototype.Login = function(user, pass, callback){
 	var mPrefix = "[Login]";
 
 	var usuarioObj = null;
 
 	try{
-		usuarioObj = usuarioDA.ValidarUsuario(user, pass);
+		usuarioDA.ValidarUsuario(user, pass, function(data){
+			usuarioObj = data;
+			console.log(cPrefix + mPrefix + " => Respuesta: " + usuarioObj);
+			callback(usuarioObj);
+		});
+
 	}
 	catch(err){
-		console.log(cPrefix + mPrefix + "=> Error. Detalle: " + err.message);
+		console.log(cPrefix + mPrefix + " => Error. Detalle: " + err.message);
 		throw err;
 	}
-
-	return usuarioObj;
 };
 	
-UsuarioController.prototype.Crear = function(username, password, nombre, role){
+UsuarioController.prototype.Crear = function(username, password, nombre, role, callback){
 	var mPrefix = "[Crear]";
 
 	var resultObj = false;
 
 	try{
-		resultObj = usuarioDA.CrearUsuario(username, password, nombre, role);
+		usuarioDA.CrearUsuario(username, password, nombre, role, function(data){
+			resultObj = data;
+			console.log(cPrefix + mPrefix + " => Respuesta: " + usuarioObj);
+			callback(resultObj);
+		});
 	}
 	catch(err){
-		console.log(cPrefix + mPrefix + "=> Error. Detalle: " + err.message);
+		console.log(cPrefix + mPrefix + " => Error. Detalle: " + err.message);
 		throw err;
 	}
-
-	return resultObj;
 };
 
 UsuarioController.prototype.Lista = function(callback){
@@ -43,12 +48,12 @@ UsuarioController.prototype.Lista = function(callback){
 	try{
 		usuarioDA.GetAll(function(data){
 			resultObj = data;	
-			console.log(cPrefix + mPrefix + "=>Detalle: " + resultObj);
+			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
 		});
 	}
 	catch(err){
-		console.log(cPrefix + mPrefix + "=> Error. Detalle: " + err.message);
+		console.log(cPrefix + mPrefix + " => Error. Detalle: " + err.message);
 		throw err;
 	}
 };

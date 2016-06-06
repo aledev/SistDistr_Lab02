@@ -60,17 +60,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressSession({secret: cookieSecret}));
 
-function errorSistema(msgError){
-	app.use(function(req, res){
-	  res.render('error',
-		  { title : 'Error de Sistema',
-		  	pageTitle: 'Error de Sistema',
-		  	detalleError: msgError
-		  }
-	  )
-	});
+function errorSistema(req, res, msgError){
+  res.render('error',
+	  { 
+	  	title : 'Error de Sistema',
+	  	pageTitle: 'Error de Sistema',
+	  	detalleError: msgError
+	  }
+  );
 }
 
+// *******************
 // *** Modulo: Sistema
 // Ruta del Login
 app.get('/', function (req, res) {
@@ -98,22 +98,22 @@ app.post('/logon', function(req,res){
 			}
 		}, 
 		function(error, response, body){
-		  if(error != null) throw error;
-		  if(response.statusCode != 200){
-		  	throw new error("Ha ocurrido un error en el servidor :(");
-		  }
+		  if(error != null){
+  			errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+		  } 
 		  else{
 		  	req.session.currentUser = response;
 		  	loggerHelper.AddLog('Usuario: ' + req.body.username + ' ha ingresado al sistema!');
 		  }
-		  console.log("status: " + response.statusCode + ", body: " + body);
+		  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
 	}
 	catch(error){
-		errorSistema(error.message);
+		errorSistema(req, res, error.message);
 	}
 });
 
+// ********************
 // *** Modulo: Usuarios
 // Ruta de la Creación de Usuarios
 app.get('/usuario/crear', function (req, res) {
@@ -146,9 +146,8 @@ app.post('/usuario/crearNuevo', function(req,res){
 			}
 		}, 
 		function(error, response, body){
-		  if(error != null) throw error;
-		  if(response.statusCode != 200){
-		  	throw new error("Ha ocurrido un error en el servidor :(");
+		  if(error != null){
+		  	errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
 		  }
 		  else{		  	
 		  	res.render('usuario/crear',
@@ -159,12 +158,11 @@ app.post('/usuario/crearNuevo', function(req,res){
 
 		  	loggerHelper.AddLog('Se ha creado un usuario en sistema!');
 		  }
-
-		  console.log("status: " + response.statusCode + ", body: " + body);
+		  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
  	}
  	catch(error){
- 		errorSistema(error.message);
+ 		errorSistema(req, res, error.message);
  	}
 });
 // Ruta de la Lista de Usuarios
@@ -177,9 +175,8 @@ app.get('/usuario/lista', function (req, res) {
 		  	url: serverUrl + '/usuario/list',			
 			}, 
 			function(error, response, body){
-			  if(error != null) throw error;
-			  if(response.statusCode != 200){
-			  	throw new error("Ha ocurrido un error en el servidor :(");
+			  if(error != null) {
+			  	errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
 			  }
 			  else {
 			  	  console.log(body);
@@ -190,12 +187,24 @@ app.get('/usuario/lista', function (req, res) {
 					  }
 		  		  );
 			  }
-			  console.log("status: " + response.statusCode + ", body: " + body);
+			  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
 	}
 	catch(error){
-		errorSistema(error.message);
+		errorSistema(req, res, error.message);
 	}
+});
+
+// **************************
+// Manejo de Paginas de Error
+// catch 404 and forward to error handler
+app.get('*', function(req, res){
+  res.render('error',
+	  { title : 'Error de Sistema',
+	  	pageTitle: 'Error de Sistema',
+	  	detalleError: "Pagina No Encontrada!"
+	  }
+  )
 });
 
 app.listen(port)
