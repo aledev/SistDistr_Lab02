@@ -32,7 +32,7 @@ UsuarioController.prototype.Crear = function(username, password, nombre, role, c
 	try{
 		usuarioDA.CrearUsuario(username, password, nombre, role, function(data){
 			resultObj = data;
-			console.log(cPrefix + mPrefix + " => Respuesta: " + usuarioObj);
+			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
 		});
 	}

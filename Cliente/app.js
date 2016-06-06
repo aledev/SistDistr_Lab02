@@ -104,6 +104,11 @@ app.post('/logon', function(req,res){
 		  else{
 		  	req.session.currentUser = response;
 		  	loggerHelper.AddLog('Usuario: ' + req.body.username + ' ha ingresado al sistema!');
+		  	 res.render('home/home',
+				  { title : 'Home - Lab02',
+				  	pageTitle: 'Página de Inicio' 
+				  }
+			  );
 		  }
 		  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
