@@ -1,0 +1,17 @@
+extend ../layout/layout
+block content
+  form(action='/logon',method='post')
+    div
+      table
+        thead
+          tr: th Usuarios
+        tbody
+          each user, i in userObjList
+            tr
+              td 
+                span #{user.username}
+              td 
+                span #{user.nombre}
+              td
+                span #{user.role}
+

@@ -1,0 +1,13 @@
+extend layout/layout
+block content
+  form(action='/',method='get')
+    div(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')        
+          p 
+             h3 ... Ooooops!! Ha ocurrido un error en el sistema :( 
+          p
+            | Detalle: 
+            div.errorDiv
+              span #{detalleError}
+    div(data-role='fieldcontain')   
+      input(type='submit',value='Volver al Inicio',data-transition='fade', data-theme='c')

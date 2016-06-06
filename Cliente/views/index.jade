@@ -1,0 +1,15 @@
+extend layout/layout
+block content
+  form(action='/logon',method='post')
+    div(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')        
+          label(for='username') Usuario:
+          p
+           input(id='txtUsername',type='text',value='',placeholder='Nombre de Usuario',name='username')
+    div#passworddiv(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')
+          label(for='password') Contrase&ntilde;a:
+          p
+           input(id='txtPassword',type='password',value='',placeholder='',name='password')
+    div(data-role='fieldcontain')   
+      input(type='submit',value='Ingresar',data-transition='fade', data-theme='c')
