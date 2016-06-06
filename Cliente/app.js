@@ -95,20 +95,34 @@ app.post('/logon', function(req,res){
 			form: { 
 				username: req.body.username,
 				password: hashedPass 
-			}
+			},
+			json: true
 		}, 
 		function(error, response, body){
 		  if(error != null){
   			errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
 		  } 
 		  else{
-		  	req.session.currentUser = response;
-		  	loggerHelper.AddLog('Usuario: ' + req.body.username + ' ha ingresado al sistema!');
-		  	 res.render('home/home',
-				  { title : 'Home - Lab02',
-				  	pageTitle: 'Página de Inicio' 
-				  }
-			  );
+		  	if(body.length > 0){
+			  	req.session.currentUser = body[0];
+			  	loggerHelper.AddLog('Usuario: ' + body[0].username + ' ha ingresado al sistema!');
+			  	 res.render('home/home',
+					  { title : 'Home - Lab02',
+					  	pageTitle: 'Página de Inicio',
+					  	menuItemList: [{ descripcion : "Usuarios", url : "/usuario/lista" }],
+					  	logoutUrl: '/logout',
+					  	username: body[0].username
+					  }
+				  );
+		  	}
+		  	else{
+		  		 res.render('index',
+					  	{  title : 'Inicio de Sesión',
+	  					   pageTitle: 'Inicio de Sesión',
+	  					   errorMessage: 'Usuario y/o Contraseña incorrectos'
+	  					}
+				  );
+		  	}
 		  }
 		  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
@@ -148,7 +162,8 @@ app.post('/usuario/crearNuevo', function(req,res){
 				password: hashedPass,
 				nombre: nombre,
 				role: role
-			}
+			},
+			json: true
 		}, 
 		function(error, response, body){
 		  if(error != null){
@@ -174,10 +189,11 @@ app.post('/usuario/crearNuevo', function(req,res){
 app.get('/usuario/lista', function (req, res) {
    try{
 	   request.post({
-		  	headers: { 
-		  		'content-type' : 'application/x-www-form-urlencoded'
-		  	},
-		  	url: serverUrl + '/usuario/list',			
+			  	headers: { 
+			  		'content-type' : 'application/x-www-form-urlencoded'
+			  	},
+			  	url: serverUrl + '/usuario/list',			
+			  	json: true
 			}, 
 			function(error, response, body){
 			  if(error != null) {

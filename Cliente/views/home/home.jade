@@ -1,6 +1,10 @@
-extend ../layout/layout
+extend ../layout/main-layout
 block content
     div(data-role='fieldcontain')
       p
         span Bienvenido(a) al Sistema Lab02!
-      
+block menu
+    ul.nav
+      each menuItem in menuItemList
+        li 
+          a(href=menuItem.url) !{menuItem.descripcion} 

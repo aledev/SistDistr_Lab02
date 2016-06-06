@@ -6,11 +6,19 @@ html
   body
     header
       h1 #{pageTitle}
+      div.logInfo
+        table
+          tr
+            td
+              | Bienvenido(a): 
+              span #{username}
+            td
+              a(href="{logoutUrl}") Salir
     .container
+      .menu
+        block menu
       .main-content
-        div
-          p.errorMessage #{errorMessage}
-
+        div #{errorMessage}
         block content
       .sidebar
         block sidebar
