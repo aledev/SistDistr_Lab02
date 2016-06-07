@@ -19,6 +19,8 @@ var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 // Obtenemos la referencia del helper para los logs de socket.io del cliente
 var loggerHelper = require('./js/LoggerHelper');
+// Obtenemos la referencia del helper la construcción del ambiente de acuerdo al rol del usaurio
+var menuHelper = require('./js/MenuHelper');
 // Generamos la sal
 var salt = 'l4ab02$altP4$$wørD';
 // Palabra secreta de la cookie actual
@@ -47,10 +49,6 @@ app.use(stylus.middleware(
   }
 ))
 
-socket.on('logs', function(data) {  
-    loggerHelper.RenderLogMessages(data);
-});
-
 app.use(express.static(__dirname + '/public'))
 // support json encoded bodies
 app.use(bodyParser.json()); 
@@ -59,16 +57,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // support cookies
 app.use(cookieParser());
 app.use(expressSession({secret: cookieSecret}));
-
-function errorSistema(req, res, msgError){
-  res.render('error',
-	  { 
-	  	title : 'Error de Sistema',
-	  	pageTitle: 'Error de Sistema',
-	  	detalleError: msgError
-	  }
-  );
-}
 
 // *******************
 // *** Modulo: Sistema
@@ -100,47 +88,61 @@ app.post('/logon', function(req,res){
 		}, 
 		function(error, response, body){
 		  if(error != null){
-  			errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+  			menuHelper.ErrorSistema(req, res, "Ha ocurrido un error en el servidor :(");
 		  } 
 		  else{
 		  	if(body.length > 0){
 			  	req.session.currentUser = body[0];
-			  	loggerHelper.AddLog('Usuario: ' + body[0].username + ' ha ingresado al sistema!');
+			  	loggerHelper.AddLog(body[0].username, 'Ha iniciado sesión');
 			  	 res.render('home/home',
 					  { title : 'Home - Lab02',
 					  	pageTitle: 'Página de Inicio',
-					  	menuItemList: [{ descripcion : "Usuarios", url : "/usuario/lista" }],
+					  	menuItemList: menuHelper.BuildMenu(req),
 					  	logoutUrl: '/logout',
 					  	username: body[0].username
 					  }
 				  );
 		  	}
 		  	else{
-		  		 res.render('index',
-					  	{  title : 'Inicio de Sesión',
-	  					   pageTitle: 'Inicio de Sesión',
-	  					   errorMessage: 'Usuario y/o Contraseña incorrectos'
-	  					}
-				  );
+		  		menuHelper.RedirectPage('index', req, res, 'Usuario y/o Contraseña incorrectos');		  		 
 		  	}
 		  }
-		  //console.log("status: " + response.statusCode + ", body: " + body);
 		});	
 	}
 	catch(error){
-		errorSistema(req, res, error.message);
+		menuHelper.ErrorSistema(req, res, error.message);
 	}
+});
+// Rutal del Home
+app.get('/home/home', function(req, res){
+	res.render('home/home',
+		  { title : 'Home - Lab02',
+		  	pageTitle: 'Página de Inicio',
+		  	menuItemList: menuHelper.BuildMenu(req),
+		  	logoutUrl: '/logout',
+		  	username: req.session.currentUser.username
+		  }
+	  );
+})
+// Ruta del Logout
+app.get('/logout', function (req, res) {
+	menuHelper.DestroySession(req, res, loggerHelper);
 });
 
 // ********************
 // *** Modulo: Usuarios
 // Ruta de la Creación de Usuarios
 app.get('/usuario/crear', function (req, res) {
-  res.render('usuario/crear',
-	  { title : 'Crear Usuario',
-	  	pageTitle: 'Ingresar Datos Usuario' 
-	  }
-  )
+	if(menuHelper.CheckCurrentPagePermission(req, res, '/usuario/crear')){
+	  res.render('usuario/crear',
+		  { title : 'Crear Usuario',
+		  	pageTitle: 'Ingresar Datos Usuario',
+		  	menuItemList: menuHelper.BuildMenu(req),
+		  	logoutUrl: '/logout',
+		  	username: req.session.currentUser.username 
+		  }
+	  )
+	}
 });
 // Evento Post de la Creación de Usuarios
 app.post('/usuario/crearNuevo', function(req,res){
@@ -167,7 +169,7 @@ app.post('/usuario/crearNuevo', function(req,res){
 		}, 
 		function(error, response, body){
 		  if(error != null){
-		  	errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+		  	menuHelper.ErrorSistema(req, res, "Ha ocurrido un error en el servidor :(");
 		  }
 		  else{		  	
 		  	res.render('usuario/crear',
@@ -182,37 +184,41 @@ app.post('/usuario/crearNuevo', function(req,res){
 		});	
  	}
  	catch(error){
- 		errorSistema(req, res, error.message);
+ 		menuHelper.ErrorSistema(req, res, error.message);
  	}
 });
 // Ruta de la Lista de Usuarios
 app.get('/usuario/lista', function (req, res) {
    try{
-	   request.post({
-			  	headers: { 
-			  		'content-type' : 'application/x-www-form-urlencoded'
-			  	},
-			  	url: serverUrl + '/usuario/list',			
-			  	json: true
-			}, 
-			function(error, response, body){
-			  if(error != null) {
-			  	errorSistema(req, res, "Ha ocurrido un error en el servidor :(");
-			  }
-			  else {
-			  	  console.log(body);
-			  	  res.render('usuario/lista',
-					  { title : 'Lista de Usuarios',
-					  	pageTitle: 'Lista de Usuarios',
-					  	userObjList: body
-					  }
-		  		  );
-			  }
-			  //console.log("status: " + response.statusCode + ", body: " + body);
-		});	
+	   	if(menuHelper.CheckCurrentPagePermission(req, res, '/usuario/crear')){
+		   request.post({
+				  	headers: { 
+				  		'content-type' : 'application/x-www-form-urlencoded'
+				  	},
+				  	url: serverUrl + '/usuario/list',			
+				  	json: true
+				}, 
+				function(error, response, body){
+				  if(error != null) {
+				  	menuHelper.ErrorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+				  }
+				  else {
+				  	  console.log(body);
+				  	  res.render('usuario/lista',
+						  { title : 'Lista de Usuarios',
+						  	pageTitle: 'Lista de Usuarios',
+						  	userObjList: body,
+					  	 	menuItemList: menuHelper.BuildMenu(req),
+		  					logoutUrl: '/logout',
+		  					username: req.session.currentUser.username 
+						  }
+			  		  );
+				  }
+			});	
+		}
 	}
 	catch(error){
-		errorSistema(req, res, error.message);
+		menuHelper.ErrorSistema(req, res, error.message);
 	}
 });
 

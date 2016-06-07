@@ -1,0 +1,27 @@
+extend ../layout/main-layout
+block content
+  form(action='/logon',method='post')
+    div
+      a(class='linkButton', href='/recursohumano/crear') Crear Nuevo
+        br
+        br
+      table.lista
+        thead
+          tr
+            th Opciones
+            th Nombre de Usuario
+            th Nombre Completo
+            th Rol              
+        tbody
+          each rrhh, i in rrhhObjList
+            tr
+              td
+                a(href="/recursohumano/editar?id={rrhh._id}") Editar
+                a(href="/recursohumano/eliminar?id={rrhh._id}") Eliminar
+              td 
+                span #{rrhh.username}
+              td 
+                span #{rrhh.nombre}
+              td
+                span #{rrhh.role}
+

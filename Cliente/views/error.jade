@@ -1,6 +1,5 @@
 extend layout/layout
 block content
-  form(action='/',method='get')
     div(data-role='fieldcontain')
       fieldset(data-role='controlgroup')        
           p 
@@ -10,4 +9,4 @@ block content
               p
                 span #{detalleError}
     div(data-role='fieldcontain')   
-      input(type='submit',value='Volver al Inicio',data-transition='fade', data-theme='c')
+      a(class='linkButton', href='/') Volver al inicio

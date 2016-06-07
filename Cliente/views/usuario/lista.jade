@@ -2,9 +2,15 @@ extend ../layout/main-layout
 block content
   form(action='/logon',method='post')
     div
-      table
+      a(class='linkButton', href='/usuario/crear') Crear Nuevo
+        br
+        br
+      table.lista
         thead
-          tr: th Usuarios
+          tr
+            th Nombre de Usuario
+            th Nombre Completo
+            th Rol              
         tbody
           each user, i in userObjList
             tr

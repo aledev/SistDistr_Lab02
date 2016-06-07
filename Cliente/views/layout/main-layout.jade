@@ -4,6 +4,17 @@ html
     title #{title} - Lab02
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    script(type='text/javascript', src='/scripts/jquery-1.12.4.js')
+    script(type='text/javascript', src='/scripts/json2.min.js')
+    script(type='text/javascript', src='/scripts/socket.io.js')
+    script(type='text/javascript', src='/scripts/LoggerHelper.js')    
+    script.
+      var loggerHelper = new LoggerHelper();
+      var socket = loggerHelper.SocketRef();
+
+      socket.on('message', function (message) {
+          loggerHelper.RenderLogMessages(message);
+      });
     header
       h1 #{pageTitle}
       div.logInfo
@@ -13,14 +24,19 @@ html
               | Bienvenido(a): 
               span #{username}
             td
-              a(href="{logoutUrl}") Salir
+              a(class='linkSalir', href="#{logoutUrl}") Salir
     .container
       .menu
-        block menu
+        ul.nav
+          each menuItem in menuItemList
+            li 
+              a(href=menuItem.url) !{menuItem.descripcion} 
       .main-content
         div #{errorMessage}
         block content
       .sidebar
-        block sidebar
+        .widget
+          h1 Log de Acciones
+          div#divLogs      
     footer
       p Corriendo en Node.js junto con Express, Jade y Stylus

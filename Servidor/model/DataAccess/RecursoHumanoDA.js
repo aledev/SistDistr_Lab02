@@ -30,7 +30,7 @@ RecursoHumanoDA.prototype.Crear = function(rrhhObj, callback){
 RecursoHumanoDA.prototype.Editar = function(rrhhObj, callback){
 		// find the user with id 4
 		// update username to starlord 88
-		RecursoHumano.findByIdAndUpdate(finanzaObj.id, 
+		RecursoHumano.findByIdAndUpdate(rrhhObj.id, 
 			{
 				nombrePersona: rrhhObj.nombrePersona,
 	  			fchNacimiento: rrhhObj.fchNacimiento,

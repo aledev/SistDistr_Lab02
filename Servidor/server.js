@@ -92,7 +92,8 @@ io.sockets.on('connection', function (socket) { // conexion
 	});
 
 	socket.on('new-log', function(data) {  
-    	logs.push(data);
-    	io.sockets.emit('logs', data);
+		console.log(data);
+    	//logs.push(data);
+    	io.sockets.emit('message', data);
 	});
 });
