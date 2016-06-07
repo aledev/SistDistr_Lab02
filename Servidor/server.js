@@ -156,7 +156,7 @@ app.post('/finanza/findById', function (req, res) {
   			_id : req.body.id,
   		};
 
-		finanzaController.Filtro(objFind, function(resData){
+		finanzaController.Buscar(objFind, function(resData){
 			var responseJson = resData;
 		  	console.log(responseJson);
 		  	res.json(responseJson);

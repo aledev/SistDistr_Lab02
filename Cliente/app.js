@@ -126,14 +126,16 @@ app.post('/logon', function(req, res){
 // Rutal del Home
 app.get('/home/home', function(req, res){
 	try{
-	res.render('home/home',
-		  { title : 'Home - Lab02',
-		  	pageTitle: 'Página de Inicio',
-		  	menuItemList: menuHelper.BuildMenu(req.session.currentUser),
-		  	logoutUrl: '/logout',
-		  	username: req.session.currentUser.username
-		  }
-	  );
+		if(menuHelper.CheckCurrentPagePermission(req.session.currentUser, res, '/home/home')){
+			res.render('home/home',
+				  { title : 'Home - Lab02',
+				  	pageTitle: 'Página de Inicio',
+				  	menuItemList: menuHelper.BuildMenu(req.session.currentUser),
+				  	logoutUrl: '/logout',
+				  	username: req.session.currentUser != null ? req.session.currentUser.username : ''
+				  }
+			  );
+		}
 	}
 	catch(error){
 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
@@ -155,7 +157,7 @@ app.get('/logout', function (req, res) {
 // Ruta de la Creación de Usuarios
 app.get('/usuario/crear', function (req, res) {
 	try{
-		if(menuHelper.CheckCurrentPagePermission(req.session.currentUser, res, 'usuario/crear')){
+		if(menuHelper.CheckCurrentPagePermission(req.session.currentUser, res, '/usuario/crear')){
 		  res.render('usuario/crear',
 			  { title : 'Crear Usuario',
 			  	pageTitle: 'Ingresar Datos Usuario',
@@ -219,7 +221,7 @@ app.post('/usuario/crearNuevo', function(req, res){
 // Ruta de la Lista de Usuarios
 app.get('/usuario/lista', function (req, res) {
    try{
-	   	if(menuHelper.CheckCurrentPagePermission(req, res, 'usuario/crear')){
+	   	if(menuHelper.CheckCurrentPagePermission(req, res, '/usuario/crear')){
 		   request.post({
 				  	headers: { 
 				  		'content-type' : 'application/x-www-form-urlencoded'
@@ -293,9 +295,7 @@ app.post('/finanza/crearNuevo', function(req, res){
 		  else{		  	
 		  	console.log('respuesta body: ' + body);
 		  	if(body == true){
-	  			menuHelper.RedirectPageOk('finanza/crear', 'Crear Finanza', 'Ingresar Datos Finanza', 
-					req, res, 'La finanza se ha creado satisfactoriamente');
-
+	  			res.status(302).redirect("/finanza/lista");
 			  	// Agregamos un log de acción
 			  	loggerHelper.AddLog(req.session.currentUser.username, 'Ha creado una finanza');
 			  }
@@ -351,7 +351,7 @@ app.get('/finanza/editar', function (req, res) {
 				  	headers: { 
 				  		'content-type' : 'application/x-www-form-urlencoded'
 				  	},
-				  	url: serverUrl + '/finanza/lista',		
+				  	url: serverUrl + '/finanza/findById',		
 				  	form: { 
 						id: req.query.id
 					},	
@@ -404,14 +404,12 @@ app.post('/finanza/editarDato', function(req, res){
 		  else{		  	
 		  	console.log('respuesta body: ' + body);
 		  	if(body == true){
-	  			menuHelper.RedirectPageOk('finanza/editar?id=' + idFinanza, 'Editar Finanza', 'Editar Finanza', 
-					req, res, 'La finanza se ha editado satisfactoriamente');
-
+	  			res.status(302).redirect("/finanza/lista");
 			  	// Agregamos un log de acción
 			  	loggerHelper.AddLog(req.session.currentUser.username, 'Ha editado una finanza');
 			  }
 			else {
-				menuHelper.RedirectPageOk('finanza/crear', 'Editar Finanza', 'Editar Finanza', 
+				menuHelper.RedirectPageOk('finanza/editar?id=' + idFinanza, 'Editar Finanza', 'Editar Finanza', 
 					req, res, 'No se ha podido editar la finanza');
 			}			
 		  }
@@ -429,7 +427,10 @@ app.get('/finanza/eliminar', function (req, res) {
 				  	headers: { 
 				  		'content-type' : 'application/x-www-form-urlencoded'
 				  	},
-				  	url: serverUrl + '/finanza/lista',			
+				  	url: serverUrl + '/finanza/findById',	
+				  	form: { 
+						id: req.query.id
+					},			
 				  	json: true
 				}, 
 				function(error, response, body){
@@ -443,7 +444,7 @@ app.get('/finanza/eliminar', function (req, res) {
 						  	menuItemList: menuHelper.BuildMenu(req.session.currentUser),
 						  	logoutUrl: '/logout',
 						  	username: req.session.currentUser.username,
-						  	datosObj: body 
+						  	datosObj: body[0] 
 						  }
 					  );
 				  }
@@ -454,6 +455,44 @@ app.get('/finanza/eliminar', function (req, res) {
 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
 	}
 });
+// Evento Post de la Eliminación de Finanzas
+app.post('/finanza/eliminarDato', function(req, res){
+  try{
+  	  var idFinanza = req.body.id;
+
+	  request.post({
+		  	headers: { 
+		  		'content-type' : 'application/x-www-form-urlencoded'
+		  	},
+		  	url: serverUrl + '/finanza/eliminar',
+			form: { 
+				id: req.body.id
+			},
+			json: true
+		}, 
+		function(error, response, body){
+		  if(error != null){
+		  	menuHelper.ErrorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+		  }
+		  else{		  	
+		  	console.log('respuesta body: ' + body);
+		  	if(body == true){
+	  			res.status(302).redirect("/finanza/lista");
+			  	// Agregamos un log de acción
+			  	loggerHelper.AddLog(req.session.currentUser.username, 'Ha editado una finanza');
+			  }
+			else {
+				menuHelper.RedirectPageOk('finanza/eliminarDato?id=' + idFinanza, 'Eliminar Finanza', 'Eliminar Finanza', 
+					req, res, 'No se ha podido eliminar la finanza');
+			}			
+		  }
+		});	
+ 	}
+ 	catch(error){
+ 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
+ 	}
+});
+
 
 // **************************
 // Manejo de Paginas de Error

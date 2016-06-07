@@ -12,32 +12,34 @@ MenuHelper.prototype.BuildMenu = function (sessionObj) {
 	})
 
 	try {
-	    if(sessionObj.role == 'administrador'){
-			menuListItem.push({
-				descripcion : 'Usuarios',
-				url : '/usuario/lista'
-			});
-			menuListItem.push({
-				descripcion : 'Finanzas',
-				url : '/finanza/lista'
-			});
-			menuListItem.push({
-				descripcion : 'Recursos Humanos',
-				url : '/recursohumano/lista'
-			});
-	    }
-	    else if(sessionObj.role == 'finanza'){
-			menuListItem.push({
-				descripcion : 'Finanzas',
-				url : '/finanza/lista'
-			});
-	    }
-	    else if(sessionObj.role == 'recursohumano'){
-	    	menuListItem.push({
-				descripcion : 'Recursos Humanos',
-				url : '/recursohumano/lista'
-			});
-	    }
+		if(sessionObj != null){
+		    if(sessionObj.role == 'administrador'){
+				menuListItem.push({
+					descripcion : 'Usuarios',
+					url : '/usuario/lista'
+				});
+				menuListItem.push({
+					descripcion : 'Finanzas',
+					url : '/finanza/lista'
+				});
+				menuListItem.push({
+					descripcion : 'Recursos Humanos',
+					url : '/recursohumano/lista'
+				});
+		    }
+		    else if(sessionObj.role == 'finanza'){
+				menuListItem.push({
+					descripcion : 'Finanzas',
+					url : '/finanza/lista'
+				});
+		    }
+		    else if(sessionObj.role == 'recursohumano'){
+		    	menuListItem.push({
+					descripcion : 'Recursos Humanos',
+					url : '/recursohumano/lista'
+				});
+		    }
+		}
 	}
 	catch(error){
 		console.log('Error, detalle: ' + error.message);
@@ -50,31 +52,46 @@ MenuHelper.prototype.CheckCurrentPagePermission = function (sessionObj, res, pag
 	var result = true;
 
 	try {
-		if(sessionObj.role == 'finanza'){
-			if(!page.startsWith('/finanza')){
-				res.render('/error',
-				  { 
-				  	title : 'Error de Sistema',
-				  	pageTitle: 'Error de Sistema',
-				  	detalleError: 'No tiene permisos para ver la página actual'
-				  }
-			  	);
+		if(sessionObj != null){
+			if(!page.startsWith('/home')){
+				if(sessionObj.role == 'finanza'){
+					if(!page.startsWith('/finanza')){
+						res.render('error',
+						  { 
+						  	title : 'Error de Sistema',
+						  	pageTitle: 'Error de Sistema',
+						  	detalleError: 'No tiene permisos para ver la página actual'
+						  }
+					  	);
 
-			  	result = false;
+					  	result = false;
+					}
+				}
+				else if(sessionObj.role == 'recursohumano'){
+					if(!page.startsWith('/recursohumano')){
+						res.render('error',
+						  { 
+						  	title : 'Error de Sistema',
+						  	pageTitle: 'Error de Sistema',
+						  	detalleError: 'No tiene permisos para ver la página actual'
+						  }
+						);	
+
+						result = false;
+					}		
+				}
 			}
 		}
-		else if(sessionObj.role == 'recursohumano'){
-			if(!page.startsWith('/recursohumano')){
-				res.render('/error',
-				  { 
-				  	title : 'Error de Sistema',
-				  	pageTitle: 'Error de Sistema',
-				  	detalleError: 'No tiene permisos para ver la página actual'
-				  }
-				);	
+		else{
+			res.render('error',
+			  { 
+			  	title : 'Sesión Finalizada',
+			  	pageTitle: 'Sesión Finalizada',
+			  	detalleError: 'Se ha expirado la sesión actual!'
+			  }
+			);	
 
-				result = false;
-			}		
+			result = false;
 		}
 	}
 	catch(error){
