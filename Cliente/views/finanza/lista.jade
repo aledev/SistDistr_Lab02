@@ -1,0 +1,27 @@
+extend ../layout/main-layout
+block content
+  form(action='/logon',method='post')
+    div
+      a(class='linkButton', href='/finanza/crear') Crear Nuevo
+        br
+        br
+      table.lista
+        thead
+          tr
+            th Opciones
+            th Nombre de Usuario
+            th Nombre Completo
+            th Rol              
+        tbody
+          each finanza, i in finanzaObjList
+            tr
+              td
+                a(href="/finanza/editar?id={rrhh._id}") Editar
+                a(href="/finanza/eliminar?id={rrhh._id}") Eliminar
+              td 
+                span #{finanza.username}
+              td 
+                span #{finanza.nombre}
+              td
+                span #{finanza.role}
+

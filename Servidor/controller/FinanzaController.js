@@ -1,17 +1,17 @@
 // constructor del objeto
-var RecursoHumanoController = function(){};
+var FinanzaController = function(){};
 // namespace del objeto
-var cPrefix = "controller.RecursoHumanoController";
+var cPrefix = "controller.FinanzaController";
 // instancia del dataaccess UsuarioDA
-var rrhhDA = require.main.require('./model/DataAccess/RecursoHumanoDA');
+var finanzaDA = require.main.require('./model/DataAccess/FinanzaDA');
 	
-RecursoHumanoController.prototype.Crear = function(rrhhObj, callback){
+FinanzaController.prototype.Crear = function(finanzaObj, callback){
 	var mPrefix = "[Crear]";
 
 	var resultObj = false;
 
 	try{
-		rrhhDA.Crear(rrhhObj, function(data){
+		finanzaDA.Crear(finanzaObj, function(data){
 			resultObj = data;
 			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
@@ -23,13 +23,13 @@ RecursoHumanoController.prototype.Crear = function(rrhhObj, callback){
 	}
 };
 
-RecursoHumanoController.prototype.Editar = function(rrhhObj, callback){
+FinanzaController.prototype.Editar = function(finanzaObj, callback){
 	var mPrefix = "[Editar]";
 
 	var resultObj = false;
 
 	try{
-		rrhhDA.Editar(rrhhObj, function(data){
+		finanzaDA.Editar(finanzaObj, function(data){
 			resultObj = data;
 			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
@@ -41,13 +41,13 @@ RecursoHumanoController.prototype.Editar = function(rrhhObj, callback){
 	}
 };
 
-RecursoHumanoController.prototype.Eliminar = function(rrhhObj, callback){
+FinanzaController.prototype.Eliminar = function(finanzaObj, callback){
 	var mPrefix = "[Eliminar]";
 
 	var resultObj = false;
 
 	try{
-		rrhhDA.Eliminar(rrhhObj, function(data){
+		finanzaDA.Eliminar(finanzaObj, function(data){
 			resultObj = data;
 			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
@@ -59,11 +59,11 @@ RecursoHumanoController.prototype.Eliminar = function(rrhhObj, callback){
 	}
 };
 
-RecursoHumanoController.prototype.Lista = function(callback){
+FinanzaController.prototype.Lista = function(callback){
 	var mPrefix = "[Lista]";
 
 	try{
-		rrhhDA.GetAll(function(data){
+		finanzaDA.GetAll(function(data){
 			resultObj = data;	
 			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
 			callback(resultObj);
@@ -75,4 +75,4 @@ RecursoHumanoController.prototype.Lista = function(callback){
 	}
 };
 
-module.exports = new RecursoHumanoController();
+module.exports = new FinanzaController();

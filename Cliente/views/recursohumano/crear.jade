@@ -1,0 +1,30 @@
+extend ../layout/main-layout
+block content
+  form(action='/recursohumano/crearNuevo',method='post')
+    div(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')        
+          label(for='username') Usuario:
+          p
+           input(id='txtUsername',type='text',value='',placeholder='Nombre de Usuario',name='username')
+    div#passworddiv(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')
+          label(for='password') Contrase&ntilde;a:
+          p
+           input(id='txtPassword',type='password',value='',placeholder='',name='password')
+    div(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')        
+          label(for='nombre') Nombre Completo:
+          p
+           input(id='txtNombre',type='text',value='',placeholder='Nombre Completo',name='nombre')
+    div(data-role='fieldcontain')
+      fieldset(data-role='controlgroup')        
+          label(for='role') Rol:
+          p
+           select(id="ddlRoles", name="role")
+            option(value="administrador") Administrador
+            option(value="finanza") Finanzas
+            option(value="recursohumano") Recursos Humanos
+    div(data-role='fieldcontain')   
+      input(type='submit',value='Guardar',data-transition='fade', data-theme='c')
+      br
+      a(class='linkButton', href='/recursohumano/lista') Volver

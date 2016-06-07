@@ -2,7 +2,7 @@
 var RecursoHumanoDA = function(){};
 
 // instancia del schema RecursoHumano
-var RecursoHumano = require.main.require('./model/Schema/RecursoHumano');
+var RecursoHumano = require.main.require('./model/Schemas/RecursoHumano');
 
 // metodo para crear una finanza en DB
 RecursoHumanoDA.prototype.Crear = function(rrhhObj, callback){
@@ -76,7 +76,7 @@ RecursoHumanoDA.prototype.GetAll = function(callback){
 // metodo para obtener una lista de finanzas por un filtro determinado
 RecursoHumanoDA.prototype.GetByFiltro = function(rrhhObj, callback){
 		// get all the users
-		RecursoHumano.find({rrhhObj}, function(err, rrhhList) {
+		RecursoHumano.find({}, function(err, rrhhList) {
 		  if (err) throw err;
 
 		  // object of all the users

@@ -23,6 +23,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/controller", express.static(__dirname + '/controller'));
 // obtenemos la instancia del UsuarioController
 var usuarioController = require('./controller/UsuarioController');
+// obtenemos la instancia del RecursoHumanoController
+var recursoHumanoController = require('./controller/RecursoHumanoController');
+// obtenemos la instancia del FinanzaController
+var finanzaController = require('./controller/FinanzaController');
 
 // ********************
 // *** Modulo: Usuarios
@@ -74,6 +78,163 @@ app.post('/usuario/list', function (req, res) {
 		throw error;
 	}
 });
+
+// ********************
+// *** Modulo: Finanzas
+// Listar
+app.post('/finanza/lista', function (req, res) {
+	try{
+	  finanzaController.Lista(function(resData){
+	  	res.json(resData);	
+	  });
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Crear 
+app.post('/finanza/crear', function (req, res) {
+	try{
+  		var objCreate = {
+		  	nombrePersona: req.body.nombrePersona,
+  			fchMovimiento: req.body.fchMovimiento,
+  			saldoMovimiento: req.body.saldoMovimiento
+  		};
+
+	  	finanzaController.Crear(objCreate, function(resData){
+	  	var responseJson = resData;
+
+	  	console.log(responseJson);
+		res.json(responseJson);
+	  });
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Editar
+app.post('/finanza/editar', function (req, res) {
+	try{
+  		var objEdit = {
+  			id : req.body.id,
+			nombrePersona: req.body.nombrePersona,
+  			fchMovimiento: req.body.fchMovimiento,
+  			saldoMovimiento: req.body.saldoMovimiento	
+  		};
+
+		finanzaController.Editar(objEdit, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Eliminar
+app.post('/finanza/eliminar', function (req, res) {
+	try{
+		var objRemove = {
+  			id : req.body.id
+  		};
+
+		finanzaController.Eliminar(objRemove, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
+
+// ********************
+// *** Modulo: Recursos Humanos
+// Listar
+app.post('/recursohumano/lista', function (req, res) {
+	try{
+	  recursoHumanoController.Lista(function(resData){
+	  	res.json(resData);	
+	  });
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Crear 
+app.post('/recursohumano/crear', function (req, res) {
+	try{
+  		var objCreate = {
+			nombrePersona : req.body.nombrePersona,
+		  	fchNacimiento : req.body.fchNacimiento,
+		  	direccion : req.body.direccion,
+		  	comuna : req.body.comuna,
+		  	region : req.body.region,
+		  	email : req.body.email,
+		    telefono : req.body.telefono,
+		  	sexo : req.body.sexo,
+		  	fchContrato : req.body.fchContrato,
+		  	departamento : req.body.departamento	
+  		};
+
+	  	recursoHumanoController.Crear(objCreate, function(resData){
+	  	var responseJson = resData;
+
+	  	console.log(responseJson);
+		res.json(responseJson);
+	  });
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Editar
+app.post('/recursohumano/editar', function (req, res) {
+	try{
+  		var objEdit = {
+  			id : req.body.id,
+			nombrePersona : req.body.nombrePersona,
+		  	fchNacimiento : req.body.fchNacimiento,
+		  	direccion : req.body.direccion,
+		  	comuna : req.body.comuna,
+		  	region : req.body.region,
+		  	email : req.body.email,
+		    telefono : req.body.telefono,
+		  	sexo : req.body.sexo,
+		  	fchContrato : req.body.fchContrato,
+		  	departamento : req.body.departamento	
+  		};
+
+		recursoHumanoController.Editar(objEdit, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
+// Eliminar
+app.post('/recursohumano/eliminar', function (req, res) {
+	try{
+		var objRemove = {
+  			id : req.body.id
+  		};
+
+		recursoHumanoController.Eliminar(objRemove, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
+
 
 // Funciones del Socket.io
 io.sockets.on('connection', function (socket) { // conexion

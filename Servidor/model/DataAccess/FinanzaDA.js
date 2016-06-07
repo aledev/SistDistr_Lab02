@@ -2,7 +2,7 @@
 var FinanzaDA = function(){};
 
 // instancia del schema Finanza
-var Finanza = require.main.require('./model/Schema/Finanza');
+var Finanza = require.main.require('./model/Schemas/Finanza');
 
 // metodo para crear una finanza en DB
 FinanzaDA.prototype.Crear = function(finanzaObj, callback){
@@ -62,7 +62,7 @@ FinanzaDA.prototype.GetAll = function(callback){
 // metodo para obtener una lista de finanzas por un filtro determinado
 FinanzaDA.prototype.GetByFiltro = function(finanzaObj, callback){
 		// get all the users
-		Finanza.find({finanzaObj}, function(err, finanzas) {
+		Finanza.find({}, function(err, finanzas) {
 		  if (err) throw err;
 
 		  // object of all the users
