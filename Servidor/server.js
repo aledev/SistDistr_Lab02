@@ -149,6 +149,23 @@ app.post('/finanza/eliminar', function (req, res) {
 		throw error;
 	}
 });
+// Buscar por Id
+app.post('/finanza/findById', function (req, res) {
+	try{
+  		var objFind = {
+  			_id : req.body.id,
+  		};
+
+		finanzaController.Filtro(objFind, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
 
 // ********************
 // *** Modulo: Recursos Humanos
@@ -234,7 +251,23 @@ app.post('/recursohumano/eliminar', function (req, res) {
 		throw error;
 	}
 });
+// Buscar por Id
+app.post('/recursohumano/findById', function (req, res) {
+	try{
+  		var objFind = {
+  			_id : req.body.id,
+  		};
 
+		recursoHumanoController.Filtro(objFind, function(resData){
+			var responseJson = resData;
+		  	console.log(responseJson);
+		  	res.json(responseJson);
+	  	});
+	}
+	catch(error){
+		throw error;
+	}
+});
 
 // Funciones del Socket.io
 io.sockets.on('connection', function (socket) { // conexion

@@ -62,11 +62,13 @@ FinanzaDA.prototype.GetAll = function(callback){
 // metodo para obtener una lista de finanzas por un filtro determinado
 FinanzaDA.prototype.GetByFiltro = function(finanzaObj, callback){
 		// get all the users
-		Finanza.find({}, function(err, finanzas) {
-		  if (err) throw err;
+		var ObjectId = require('mongoose').Types.ObjectId; 
+		Finanza.find({ _id: new ObjectId(finanzaObj._id) }, 
+			function(err, finanzas) {
+			  if (err) throw err;
 
-		  // object of all the users
-		  callback(finanzas);
+			  // object of all the users
+			  callback(finanzas);
 		});
 };
 

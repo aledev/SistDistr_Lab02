@@ -9,19 +9,24 @@ block content
         thead
           tr
             th Opciones
-            th Nombre de Usuario
-            th Nombre Completo
-            th Rol              
+            th Nombre Persona
+            th Fecha Mov.
+            th Saldo Mov.             
         tbody
-          each finanza, i in finanzaObjList
+          if finanzaObjList.length > 0
+            each finanza, i in finanzaObjList
+              tr
+                td
+                  a(href="/finanza/editar?id=#{finanza._id}") Editar
+                  a(href="/finanza/eliminar?id=#{finanza._id}") Eliminar
+                td 
+                  span #{finanza.nombrePersona}
+                td 
+                  span #{finanza.fchMovimiento}
+                td
+                  span #{finanza.saldoMovimiento}
+          else
             tr
-              td
-                a(href="/finanza/editar?id={rrhh._id}") Editar
-                a(href="/finanza/eliminar?id={rrhh._id}") Eliminar
-              td 
-                span #{finanza.username}
-              td 
-                span #{finanza.nombre}
-              td
-                span #{finanza.role}
+              td(colspan="4")
+                span No existen datos para mostrar
 

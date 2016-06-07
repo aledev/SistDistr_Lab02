@@ -32,7 +32,8 @@ html
             li 
               a(href=menuItem.url) !{menuItem.descripcion} 
       .main-content
-        div #{errorMessage}
+        div 
+          p #{errorMessage}
         block content
       .sidebar
         .widget

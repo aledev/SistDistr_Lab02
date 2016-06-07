@@ -75,4 +75,20 @@ FinanzaController.prototype.Lista = function(callback){
 	}
 };
 
+FinanzaController.prototype.Buscar = function(finanzaObj, callback){
+	var mPrefix = "[Buscar]";
+
+	try{
+		finanzaDA.GetByFiltro(finanzaObj, function(data){
+			resultObj = data;	
+			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
+			callback(resultObj);
+		});
+	}
+	catch(err){
+		console.log(cPrefix + mPrefix + " => Error. Detalle: " + err.message);
+		throw err;
+	}
+};
+
 module.exports = new FinanzaController();

@@ -18,7 +18,7 @@ var recursoHumanoSchema = new Schema({
 
 // the schema is useless so far
 // we need to create a model using it
-var RecursoHumano = mongoose.model('RecursoHumano', recursoHumanoSchema);
+var RecursoHumano = mongoose.model('recursohumano', recursoHumanoSchema);
 
 // make this available to our users in our Node applications
 module.exports = RecursoHumano;

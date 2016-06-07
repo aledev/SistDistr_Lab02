@@ -1,7 +1,9 @@
 var MenuHelper = function(){};
+
+// Referencias 
 var io = require('socket.io-client');
 
-MenuHelper.prototype.BuildMenu = function (req) {  
+MenuHelper.prototype.BuildMenu = function (sessionObj) {  
 	var menuListItem = Array();
 
 	menuListItem.push({
@@ -9,64 +11,74 @@ MenuHelper.prototype.BuildMenu = function (req) {
 		url : '/home/home'
 	})
 
-    if(req.session.currentUser.role == 'administrador'){
-		menuListItem.push({
-			descripcion : 'Usuarios',
-			url : '/usuario/lista'
-		});
-		menuListItem.push({
-			descripcion : 'Finanzas',
-			url : '/finanza/lista'
-		});
-		menuListItem.push({
-			descripcion : 'Recursos Humanos',
-			url : '/recursohumano/lista'
-		});
-    }
-    else if(req.session.currentUser.role == 'finanza'){
-		menuListItem.push({
-			descripcion : 'Finanzas',
-			url : '/finanza/lista'
-		});
-    }
-    else if(req.session.currentUser.role == 'recursohumano'){
-    	menuListItem.push({
-			descripcion : 'Recursos Humanos',
-			url : '/recursohumano/lista'
-		});
-    }
+	try {
+	    if(sessionObj.role == 'administrador'){
+			menuListItem.push({
+				descripcion : 'Usuarios',
+				url : '/usuario/lista'
+			});
+			menuListItem.push({
+				descripcion : 'Finanzas',
+				url : '/finanza/lista'
+			});
+			menuListItem.push({
+				descripcion : 'Recursos Humanos',
+				url : '/recursohumano/lista'
+			});
+	    }
+	    else if(sessionObj.role == 'finanza'){
+			menuListItem.push({
+				descripcion : 'Finanzas',
+				url : '/finanza/lista'
+			});
+	    }
+	    else if(sessionObj.role == 'recursohumano'){
+	    	menuListItem.push({
+				descripcion : 'Recursos Humanos',
+				url : '/recursohumano/lista'
+			});
+	    }
+	}
+	catch(error){
+		console.log('Error, detalle: ' + error.message);
+	}
 
     return menuListItem;
 };
 
-MenuHelper.prototype.CheckCurrentPagePermission = function (req, res, page) {  
+MenuHelper.prototype.CheckCurrentPagePermission = function (sessionObj, res, page) {  
 	var result = true;
 
-	if(req.session.currentUser.role == 'finanza'){
-		if(!page.startsWith('/finanza')){
-			res.render('error',
-			  { 
-			  	title : 'Error de Sistema',
-			  	pageTitle: 'Error de Sistema',
-			  	detalleError: 'No tiene permisos para ver la página actual'
-			  }
-		  	);
+	try {
+		if(sessionObj.role == 'finanza'){
+			if(!page.startsWith('/finanza')){
+				res.render('/error',
+				  { 
+				  	title : 'Error de Sistema',
+				  	pageTitle: 'Error de Sistema',
+				  	detalleError: 'No tiene permisos para ver la página actual'
+				  }
+			  	);
 
-		  	result = false;
+			  	result = false;
+			}
+		}
+		else if(sessionObj.role == 'recursohumano'){
+			if(!page.startsWith('/recursohumano')){
+				res.render('/error',
+				  { 
+				  	title : 'Error de Sistema',
+				  	pageTitle: 'Error de Sistema',
+				  	detalleError: 'No tiene permisos para ver la página actual'
+				  }
+				);	
+
+				result = false;
+			}		
 		}
 	}
-	else if(req.session.currentUser.role == 'recursohumano'){
-		if(!page.startsWith('/recursohumano')){
-			res.render('error',
-			  { 
-			  	title : 'Error de Sistema',
-			  	pageTitle: 'Error de Sistema',
-			  	detalleError: 'No tiene permisos para ver la página actual'
-			  }
-			);	
-
-			result = false;
-		}		
+	catch(error){
+		console.log('Error, detalle: ' + error.message + '\n' + 'Session: ' + sessionObj);
 	}
 
 	return result;
@@ -92,8 +104,21 @@ MenuHelper.prototype.RedirectPage = function (page, req, res, msgError){
 	  );
 };
 
+MenuHelper.prototype.RedirectPageOk = function (page, title, pageTitle, req, res, msgError){
+	  res.render(page,
+		  { 
+		  	title : title,
+		  	pageTitle: pageTitle,
+		  	errorMessage: msgError,
+	  		menuItemList: this.BuildMenu(req.session.currentUser),
+	  		logoutUrl: '/logout',
+		  	username: req.session.currentUser.username 
+		  }
+	  );
+};
+
 MenuHelper.prototype.DestroySession = function (req, res, logger){
-	if(req.session.currentUser != null){
+	if(sessionObj.currentUser != null){
   		var username = req.session.currentUser.username;
   		logger.AddLog(username, 'Ha salido del sistema');
 	}

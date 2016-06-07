@@ -11,7 +11,7 @@ var finanzaSchema = new Schema({
 
 // el "schema" es inservible aún...
 // necesitamos crear un modelo para utilizarlo
-var Finanza = mongoose.model('Finanza', finanzaSchema);
+var Finanza = mongoose.model('finanza', finanzaSchema);
 
 // dejamos esto disponible para la aplicación nodejs
 module.exports = Finanza;

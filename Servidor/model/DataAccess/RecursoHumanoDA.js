@@ -75,12 +75,14 @@ RecursoHumanoDA.prototype.GetAll = function(callback){
 
 // metodo para obtener una lista de finanzas por un filtro determinado
 RecursoHumanoDA.prototype.GetByFiltro = function(rrhhObj, callback){
+		var ObjectId = require('mongoose').Types.ObjectId; 
 		// get all the users
-		RecursoHumano.find({}, function(err, rrhhList) {
-		  if (err) throw err;
+		RecursoHumano.find({ _id: new ObjectId(rrhhObj._id) }, 
+			function(err, rrhhList) {
+			  if (err) throw err;
 
-		  // object of all the users
-		  callback(rrhhList);
+			  // object of all the users
+			  callback(rrhhList);
 		});
 };
 

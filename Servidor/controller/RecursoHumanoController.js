@@ -75,4 +75,20 @@ RecursoHumanoController.prototype.Lista = function(callback){
 	}
 };
 
+RecursoHumanoController.prototype.Buscar = function(rrhhObj, callback){
+	var mPrefix = "[Buscar]";
+
+	try{
+		rrhhDA.GetByFiltro(rrhhObj, function(data){
+			resultObj = data;	
+			console.log(cPrefix + mPrefix + " => Respuesta: " + resultObj);
+			callback(resultObj);
+		});
+	}
+	catch(err){
+		console.log(cPrefix + mPrefix + " => Error. Detalle: " + err.message);
+		throw err;
+	}
+};
+
 module.exports = new RecursoHumanoController();
