@@ -3,27 +3,20 @@ block content
   form(action='/finanza/editarDato',method='post')
     div(data-role='fieldcontain')
       fieldset(data-role='controlgroup')        
-          label(for='username') Usuario:
+          label(for='nombrePersona') Nombre Persona:
           p
-           input(id='txtUsername',type='text',value='',placeholder='Nombre de Usuario',name='username')
+           input(id='hdnIdFinanza', type='hidden', name='id', value='#{datosObj._id}')
+           input(id='txtNombrePersona',type='text',value='#{datosObj.nombrePersona}',placeholder='Nombre de Persona',name='nombrePersona',required='required')
     div#passworddiv(data-role='fieldcontain')
       fieldset(data-role='controlgroup')
-          label(for='password') Contrase&ntilde;a:
+          label(for='fchMovimiento') Fecha Movimiento:
           p
-           input(id='txtPassword',type='password',value='',placeholder='',name='password')
+           input(id='txtFchMovimiento',type='date',value='2016-01-01',placeholder='Fecha Movimiento',name='fchMovimiento',required='required')
     div(data-role='fieldcontain')
       fieldset(data-role='controlgroup')        
-          label(for='nombre') Nombre Completo:
+          label(for='saldoMovimiento') Saldo Movimiento:
           p
-           input(id='txtNombre',type='text',value='',placeholder='Nombre Completo',name='nombre')
-    div(data-role='fieldcontain')
-      fieldset(data-role='controlgroup')        
-          label(for='role') Rol:
-          p
-           select(id="ddlRoles", name="role")
-            option(value="administrador") Administrador
-            option(value="finanza") Finanzas
-            option(value="recursohumano") Recursos Humanos
+           input(id='txtSaldoMovimiento',type='number',value='#{datosObj.saldoMovimiento}',placeholder='Saldo Movimiento',name='saldoMovimiento')
     div(data-role='fieldcontain')   
       input(type='submit',value='Guardar',data-transition='fade', data-theme='c')
       br

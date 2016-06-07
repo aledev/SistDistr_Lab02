@@ -118,7 +118,7 @@ MenuHelper.prototype.RedirectPageOk = function (page, title, pageTitle, req, res
 };
 
 MenuHelper.prototype.DestroySession = function (req, res, logger){
-	if(sessionObj.currentUser != null){
+	if(req.session.currentUser != null){
   		var username = req.session.currentUser.username;
   		logger.AddLog(username, 'Ha salido del sistema');
 	}

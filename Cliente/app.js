@@ -33,6 +33,8 @@ var socket = io.connect(serverUrl, { 'forceNew': true });
 var port = 3000;
 // instancia de express
 var app = express();
+// Instancia del modulo moment
+app.locals.moment = require('moment');
 
 function compile(str, path) {
 	return stylus(str)
@@ -197,14 +199,14 @@ app.post('/usuario/crearNuevo', function(req, res){
 		  }
 		  else{		  	
 		  	if(body== true){
-	  			menuHelper.RedirectPageOk('/usuario/crear', 'Crear Usuario', 'Ingresar Datos Usuario', 
+	  			menuHelper.RedirectPageOk('usuario/crear', 'Crear Usuario', 'Ingresar Datos Usuario', 
 					req, res, 'El usuario se ha creado satisfactoriamente');
 
 			  	// Agregamos un log de acción
 			  	loggerHelper.AddLog(req.session.currentUser.username, 'Ha creado un usuario');
 			  }
 			else {
-				menuHelper.RedirectPageOk('/usuario/crear', 'Crear Usuario', 'Ingresar Datos Usuario', 
+				menuHelper.RedirectPageOk('usuario/crear', 'Crear Usuario', 'Ingresar Datos Usuario', 
 					req, res, 'No se ha podido crear el usuario');
 			}			
 		  }
@@ -269,16 +271,9 @@ app.get('/finanza/crear', function (req, res) {
 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
 	}
 });
-// Evento Post de la Creación de Usuarios
+// Evento Post de la Creación de Finanzas
 app.post('/finanza/crearNuevo', function(req, res){
   try{
-	  // Hash the password with the salt
-	  var passAndSalt = salt + req.body.password;
-	  var hashedPass = crypto.createHash('sha256').update(passAndSalt).digest('base64');
-	  var username = req.body.username;
-	  var nombre = req.body.nombre;
-	  var role = req.body.role;
-
 	  request.post({
 		  	headers: { 
 		  		'content-type' : 'application/x-www-form-urlencoded'
@@ -356,7 +351,10 @@ app.get('/finanza/editar', function (req, res) {
 				  	headers: { 
 				  		'content-type' : 'application/x-www-form-urlencoded'
 				  	},
-				  	url: serverUrl + '/finanza/lista',			
+				  	url: serverUrl + '/finanza/lista',		
+				  	form: { 
+						id: req.query.id
+					},	
 				  	json: true
 				}, 
 				function(error, response, body){
@@ -370,7 +368,7 @@ app.get('/finanza/editar', function (req, res) {
 						  	menuItemList: menuHelper.BuildMenu(req.session.currentUser),
 						  	logoutUrl: '/logout',
 						  	username: req.session.currentUser.username,
-						  	datosObj: body 
+						  	datosObj: body[0]
 						  }
 					  );
 				  }
@@ -380,6 +378,48 @@ app.get('/finanza/editar', function (req, res) {
 	catch(error){
 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
 	}
+});
+// Evento Post de la Edición de Finanzas
+app.post('/finanza/editarDato', function(req, res){
+  try{
+  	  var idFinanza = req.body.id;
+
+	  request.post({
+		  	headers: { 
+		  		'content-type' : 'application/x-www-form-urlencoded'
+		  	},
+		  	url: serverUrl + '/finanza/editar',
+			form: { 
+				id: req.body.id,
+				nombrePersona: req.body.nombrePersona,
+				fchMovimiento: req.body.fchMovimiento,
+  				saldoMovimiento: req.body.saldoMovimiento
+			},
+			json: true
+		}, 
+		function(error, response, body){
+		  if(error != null){
+		  	menuHelper.ErrorSistema(req, res, "Ha ocurrido un error en el servidor :(");
+		  }
+		  else{		  	
+		  	console.log('respuesta body: ' + body);
+		  	if(body == true){
+	  			menuHelper.RedirectPageOk('finanza/editar?id=' + idFinanza, 'Editar Finanza', 'Editar Finanza', 
+					req, res, 'La finanza se ha editado satisfactoriamente');
+
+			  	// Agregamos un log de acción
+			  	loggerHelper.AddLog(req.session.currentUser.username, 'Ha editado una finanza');
+			  }
+			else {
+				menuHelper.RedirectPageOk('finanza/crear', 'Editar Finanza', 'Editar Finanza', 
+					req, res, 'No se ha podido editar la finanza');
+			}			
+		  }
+		});	
+ 	}
+ 	catch(error){
+ 		menuHelper.ErrorSistema(req, res, 'Error no controlado. Detalle: ' + error.message);
+ 	}
 });
 // Ruta de la Eliminación de Finanzas
 app.get('/finanza/eliminar', function (req, res) {
